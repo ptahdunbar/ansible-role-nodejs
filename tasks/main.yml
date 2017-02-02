@@ -27,3 +27,15 @@
     src: npm.sh.j2
     dest: /etc/profile.d/npm.sh
     mode: 0644
+
+- name: Ensure npm global packages are at the latest release.
+  npm:
+    name: "{{ item.name }}"
+    version: "{{ item.version | default('latest') }}"
+    global: yes
+    state: latest
+  environment:
+    NPM_CONFIG_PREFIX: "{{ npm_config_prefix }}"
+    NODE_PATH: "{{ npm_config_prefix }}/lib/node_modules"
+    NPM_CONFIG_UNSAFE_PERM: "{{ npm_config_unsafe_perm }}"
+  with_items: "{{ nodejs_npm_global_packages }}"
